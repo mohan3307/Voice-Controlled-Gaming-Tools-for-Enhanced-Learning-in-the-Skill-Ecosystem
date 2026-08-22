@@ -1,0 +1,16 @@
+{
+  "name": "voice-controlled-gaming-learning-ecosystem",
+  "version": "1.0.0",
+  "description": "Voice Controlled Gaming Tools for Enhanced Learning in the Skill Ecosystem",
+  "main": "index.js",
+  "scripts": {
+    "bootstrap": "npm install && npm install --prefix server && npm install --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "dev": "npx concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "seed": "npm run seed --prefix server"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
