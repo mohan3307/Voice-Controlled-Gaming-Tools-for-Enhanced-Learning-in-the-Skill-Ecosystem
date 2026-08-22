@@ -3,22 +3,14 @@ services:
     name: voiceskill-backend
     env: node
     plan: free
-    rootDir: server
-    buildCommand: npm install && npm run build
-    startCommand: node build/server.js
+    buildCommand: cd server && npm install && npm run build
+    startCommand: node server/build/server.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 3000
       - key: MONGO_URI
-        fromDatabase:
-          name: voiceskill-db
-          property: connectionString
+        sync: false
       - key: JWT_SECRET
         generateValue: true
-
-databases:
-  - name: voiceskill-db
-    plan: free
-    databaseName: voice-skill-ecosystem
