@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getApiUrl } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { useVoice, CommandMapping } from '../context/VoiceContext';
 import { Terminal, Code, PlayCircle, HelpCircle, ArrowLeft, RefreshCw, Brain, Mic, MicOff } from 'lucide-react';
@@ -149,7 +150,7 @@ export const CodingBattle: React.FC<CodingBattleProps> = ({ gameId, onBack }) =>
   const fetchGame = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/games/${gameId}`, {
+      const res = await fetch(getApiUrl(`/api/games/${gameId}`), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -266,7 +267,7 @@ export const CodingBattle: React.FC<CodingBattleProps> = ({ gameId, onBack }) =>
 
     try {
       const elapsed = Math.floor((Date.now() - timeParams.start) / 1000);
-      const res = await fetch(`/api/games/${gameId}/submit`, {
+      const res = await fetch(getApiUrl(`/api/games/${gameId}/submit`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

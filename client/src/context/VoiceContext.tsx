@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { SOCKET_URL } from '../config';
 
 export interface CommandMapping {
   phrase: string;
@@ -65,7 +66,7 @@ export const VoiceProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const connectVoiceSocket = (username: string) => {
     if (socketRef.current) return; // Already initialized
 
-    const socket = io('/');
+    const socket = io(SOCKET_URL);
     socketRef.current = socket;
 
     socket.on('connect', () => {

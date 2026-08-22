@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useVoice } from '../context/VoiceContext';
+import { getApiUrl } from '../config';
 import { SkillGraph } from '../components/SkillGraph';
 import { Award, Flame, Zap, Activity, Brain, Trophy, ChevronRight, RefreshCw, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -57,9 +58,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLaunchGame }) => {
       const headers = { 'Authorization': `Bearer ${token}` };
 
       const [skillsRes, statsRes, aiRes] = await Promise.all([
-        fetch('/api/skills', { headers }),
-        fetch('/api/analytics/stats', { headers }),
-        fetch('/api/analytics/recommendations', { headers })
+        fetch(getApiUrl('/api/skills'), { headers }),
+        fetch(getApiUrl('/api/analytics/stats'), { headers }),
+        fetch(getApiUrl('/api/analytics/recommendations'), { headers })
       ]);
 
       const skillsData = await skillsRes.json();

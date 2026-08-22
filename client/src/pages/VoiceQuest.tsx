@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { getApiUrl } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { useVoice, CommandMapping } from '../context/VoiceContext';
 import { BookOpen, Sparkles, Volume2, Mic, MicOff, ArrowLeft, RefreshCw, HelpCircle, CheckCircle2 } from 'lucide-react';
@@ -52,7 +53,7 @@ export const VoiceQuest: React.FC<VoiceQuestProps> = ({ gameId, onBack }) => {
   const fetchQuest = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/games/${gameId}`, {
+      const res = await fetch(getApiUrl(`/api/games/${gameId}`), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -254,7 +255,7 @@ export const VoiceQuest: React.FC<VoiceQuestProps> = ({ gameId, onBack }) => {
       speak("Scenario solved successfully! Logging progress analytics.");
       confetti({ particleCount: 80, spread: 60, origin: { y: 0.8 } });
 
-      const res = await fetch(`/api/games/${gameId}/submit`, {
+      const res = await fetch(getApiUrl(`/api/games/${gameId}/submit`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

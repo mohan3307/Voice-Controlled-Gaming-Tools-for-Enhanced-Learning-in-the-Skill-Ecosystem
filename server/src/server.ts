@@ -49,7 +49,17 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/voice-skil
 app.use(helmet({
   contentSecurityPolicy: false // disable if conflicts with browser tools
 }));
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://mohan3307.github.io',
+    /\.github\.io$/
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // API Throttling

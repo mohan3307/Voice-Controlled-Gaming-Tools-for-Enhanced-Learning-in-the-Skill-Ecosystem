@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getApiUrl } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { ShieldCheck, Users, ShieldAlert, Sparkles, RefreshCw, Layers } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -16,8 +17,8 @@ export const AdminDashboard: React.FC = () => {
       setLoading(true);
       const headers = { 'Authorization': `Bearer ${token}` };
       const [usersRes, logsRes] = await Promise.all([
-        fetch('/api/admin/users', { headers }),
-        fetch('/api/admin/audit', { headers })
+        fetch(getApiUrl('/api/admin/users'), { headers }),
+        fetch(getApiUrl('/api/admin/audit'), { headers })
       ]);
 
       const usersData = await usersRes.json();
@@ -38,7 +39,7 @@ export const AdminDashboard: React.FC = () => {
 
   const handleUpdateRole = async (userId: string, targetRole: string) => {
     try {
-      const res = await fetch(`/api/admin/users/${userId}/role`, {
+      const res = await fetch(getApiUrl(`/api/admin/users/${userId}/role`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

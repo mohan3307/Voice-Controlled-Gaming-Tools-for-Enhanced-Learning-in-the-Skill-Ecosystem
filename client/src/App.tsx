@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from './config';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { VoiceProvider, useVoice } from './context/VoiceContext';
 import { Navbar } from './components/Navbar';
@@ -34,7 +35,7 @@ const MainLayout: React.FC = () => {
 
   const handleLaunchGame = async (gameId: string) => {
     try {
-      const response = await fetch(`/api/games/${gameId}`, {
+      const response = await fetch(getApiUrl(`/api/games/${gameId}`), {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

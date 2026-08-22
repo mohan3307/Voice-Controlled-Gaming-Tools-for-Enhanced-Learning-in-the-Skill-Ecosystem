@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { useVoice } from '../context/VoiceContext';
 import { Gamepad2, Plus, Trash2, CheckCircle, Download, FileSpreadsheet, ShieldAlert } from 'lucide-react';
@@ -37,7 +38,7 @@ export const CreativeStudio: React.FC = () => {
 
   const fetchSkillsList = async () => {
     try {
-      const res = await fetch('/api/skills', {
+      const res = await fetch(getApiUrl('/api/skills'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -104,7 +105,7 @@ export const CreativeStudio: React.FC = () => {
     };
 
     try {
-      const res = await fetch('/api/games', {
+      const res = await fetch(getApiUrl('/api/games'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

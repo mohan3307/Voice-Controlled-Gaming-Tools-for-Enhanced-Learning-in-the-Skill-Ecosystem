@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { getApiUrl } from '../config';
 import { Mic, KeyRound, Mail, UserPlus, LogIn, ShieldAlert } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -24,7 +25,7 @@ export const Login: React.FC = () => {
     setErrorMsg('');
     setSuccessMsg('');
 
-    const targetUrl = isRegister ? '/api/auth/register' : '/api/auth/login';
+    const targetUrl = isRegister ? getApiUrl('/api/auth/register') : getApiUrl('/api/auth/login');
     const payload = isRegister 
       ? { username, email, password, role, consentToVoiceProcess: consent }
       : { emailOrUsername: email, password };

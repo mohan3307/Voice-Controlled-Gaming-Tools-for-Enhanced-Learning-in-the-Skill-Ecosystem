@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useVoice, CommandMapping } from '../context/VoiceContext';
 import { io, Socket } from 'socket.io-client';
+import { SOCKET_URL } from '../config';
 import { Gamepad2, Users, Trophy, KeyRound, ArrowLeft, Volume2, MessageSquare, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
@@ -43,7 +44,7 @@ export const MultiplayerArena: React.FC<MultiplayerArenaProps> = ({ onBack }) =>
 
   useEffect(() => {
     // Establish WebSocket connection
-    socketRef.current = io('/');
+    socketRef.current = io(SOCKET_URL);
 
     socketRef.current.on('room_update', (room: any) => {
       setRoomState(room);

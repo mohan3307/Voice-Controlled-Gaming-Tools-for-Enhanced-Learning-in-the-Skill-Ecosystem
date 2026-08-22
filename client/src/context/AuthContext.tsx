@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getApiUrl } from '../config';
 
 export interface UserProfile {
   id: string;
@@ -90,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     for (const sub of submissions) {
       try {
-        await fetch(`/api/games/${sub.gameId}/submit`, {
+        await fetch(getApiUrl(`/api/games/${sub.gameId}/submit`), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

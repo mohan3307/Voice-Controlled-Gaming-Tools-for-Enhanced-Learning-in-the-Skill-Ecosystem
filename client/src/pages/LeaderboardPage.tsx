@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getApiUrl } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { Trophy, Award, Flame, Zap, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -11,7 +12,7 @@ export const LeaderboardPage: React.FC = () => {
   const fetchBoard = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/analytics/leaderboard', {
+      const res = await fetch(getApiUrl('/api/analytics/leaderboard'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
