@@ -77,7 +77,7 @@ export const VoiceQuest: React.FC<VoiceQuestProps> = ({ gameId, onBack }) => {
     fetchQuest();
   }, [gameId]);
 
-  const isQuiz = quest?.gameType === 'Quiz' || quest?.gameType === 'LogicPuzzle';
+  const isQuiz = quest?.gameType === 'Quiz' || quest?.gameType === 'LogicPuzzle' || (quest?.gameType === 'VoiceQuest' && (quest?.questions?.length ?? 0) > 0);
   const currentQuestion = quest?.questions?.[currentQuestionIdx];
   const currentStage = quest?.questStages?.find((stage: any) => stage.stageId === currentStageId);
 
