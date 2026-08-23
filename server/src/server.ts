@@ -13,6 +13,7 @@ import skillRoutes from './routes/skills';
 import gameRoutes from './routes/games';
 import analyticsRoutes from './routes/analytics';
 import adminRoutes from './routes/admin';
+import seedProdRoutes from './routes/seedProd';
 
 // Middleware imports
 import { apiLimiter } from './middleware/rateLimiter';
@@ -81,6 +82,7 @@ app.use('/api/skills', skillRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/seed-prod', seedProdRoutes);
 
 // Socket.IO Multiplayer Room Manager State
 interface RoomState {
