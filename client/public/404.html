@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>VoiceSkill Ecosystem</title>
+    <script>
+      // GitHub Pages SPA redirect fix
+      var seg = window.location.pathname.split('/').slice(1);
+      var repo = seg[0];
+      var path = seg.slice(1).join('/');
+      if (path) {
+        var query = '?p=/' + path + (window.location.search ? '&q=' + window.location.search.slice(1) : '') + window.location.hash;
+        window.location.replace('/' + repo + '/' + query);
+      }
+    </script>
+  </head>
+  <body>Redirecting...</body>
+</html>

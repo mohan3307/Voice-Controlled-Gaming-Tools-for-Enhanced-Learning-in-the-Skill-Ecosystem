@@ -44,6 +44,9 @@ jobs:
         run: npm run build
         working-directory: client
 
+      - name: Add .nojekyll to prevent Jekyll processing
+        run: touch client/dist/.nojekyll
+
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
