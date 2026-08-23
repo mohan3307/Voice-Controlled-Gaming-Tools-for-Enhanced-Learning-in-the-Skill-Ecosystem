@@ -5,7 +5,7 @@ import { Game } from '../models/Game';
 
 const router = Router();
 
-// One-time production seed endpoint - protected by secret key
+// One-time production seed endpoint protected by secret key
 // Call: POST /api/seed-prod  with header x-seed-key: SEED_SECRET_2026
 router.post('/', async (req: Request, res: Response) => {
   const key = req.headers['x-seed-key'];
@@ -14,20 +14,23 @@ router.post('/', async (req: Request, res: Response) => {
   }
 
   try {
-    // Check if already seeded
     const existingCount = await Skill.countDocuments();
     if (existingCount > 0) {
       return res.json({ success: true, message: `Already seeded: ${existingCount} skills found.` });
     }
 
     const subjects = [
-      { name: 'Python', shortName: 'python' },
-      { name: 'Java OOP', shortName: 'java' },
-      { name: 'HTML Web', shortName: 'html' },
-      { name: 'Data Structures', shortName: 'data_structures' },
-      { name: 'Machine Learning', shortName: 'ml' },
-      { name: 'Spoken English', shortName: 'english' }
+      { name: 'Python Basics',        slug: 'python',     category: 'Python' },
+      { name: 'Java OOP',             slug: 'java',       category: 'Java' },
+      { name: 'HTML Web',             slug: 'html',       category: 'HTML' },
+      { name: 'Data Structures',      slug: 'ds',         category: 'DataStructures' },
+      { name: 'Machine Learning',     slug: 'ml',         category: 'MachineLearning' },
+      { name: 'Spoken English',       slug: 'english',    category: 'English' }
     ];
+
+    const difficultyMap: Record<number, string> = {
+      1: 'Easy', 2: 'Easy', 3: 'Medium', 4: 'Hard', 5: 'Expert'
+    };
 
     const skillsToInsert: any[] = [];
     const gamesToInsert: any[] = [];
@@ -37,106 +40,93 @@ router.post('/', async (req: Request, res: Response) => {
 
       for (let i = 1; i <= 100; i++) {
         const skillId = new mongoose.Types.ObjectId();
+        const diff = difficultyMap[Math.min(5, Math.ceil(i / 20))] || 'Easy';
 
         skillsToInsert.push({
           _id: skillId,
           name: `${sub.name} - Level ${i}`,
-          description: `Master ${sub.name} concepts at level ${i}`,
-          subject: sub.name,
-          level: i,
-          xpRequired: (i - 1) * 50,
+          slug: `${sub.slug}-level-${i}`,
+          description: `Master ${sub.name} concepts at level ${i}. Progressive skill building from fundamentals to advanced.`,
+          category: sub.category,
           prerequisites: prevSkillId ? [prevSkillId] : [],
-          isUnlocked: i === 1
+          levelNeeded: i,
+          badgeAwarded: {
+            title: `${sub.name} L${i} Badge`,
+            icon: 'Award',
+            description: `Awarded for completing ${sub.name} Level ${i}`
+          }
         });
 
-        // Quiz Game
-        const quizId = new mongoose.Types.ObjectId();
+        // VoiceQuest Quiz Game
         gamesToInsert.push({
-          _id: quizId,
-          skillId,
-          title: `${sub.name} L${i} - VoiceQuest Quiz`,
-          type: 'VoiceQuest',
-          subject: sub.name,
-          level: i,
+          _id: new mongoose.Types.ObjectId(),
+          title: `${sub.name} L${i} - VoiceQuest`,
+          description: `Voice-controlled quiz for ${sub.name} level ${i}`,
+          skillAssociated: skillId,
+          gameType: 'VoiceQuest',
+          baseDifficulty: diff,
           xpReward: 100,
           questions: [
             {
-              question: `${sub.name} Level ${i}: What is the main concept here?`,
-              options: [`Concept A`, `Concept B`, `Concept C`, `Concept D`],
-              correctAnswer: 0,
-              explanation: `The answer relates to ${sub.name} fundamentals.`
+              prompt: `${sub.name} Level ${i}: What is the primary concept in this level?`,
+              options: ['Fundamental A', 'Fundamental B', 'Fundamental C', 'Fundamental D'],
+              correctAnswer: 'Fundamental A',
+              hint: `Think about the core principles of ${sub.name}`
             },
             {
-              question: `${sub.name} Level ${i}: Which is correct syntax?`,
-              options: [`Syntax A`, `Syntax B`, `Syntax C`, `Syntax D`],
-              correctAnswer: 1,
-              explanation: `Standard ${sub.name} syntax applies here.`
+              prompt: `${sub.name} Level ${i}: Which syntax is correct?`,
+              options: ['Syntax Option A', 'Syntax Option B', 'Syntax Option C', 'Syntax Option D'],
+              correctAnswer: 'Syntax Option B',
+              hint: `Standard ${sub.name} syntax rules apply`
             },
             {
-              question: `${sub.name} Level ${i}: What does this output?`,
-              options: [`Output A`, `Output B`, `Output C`, `Output D`],
-              correctAnswer: 2,
-              explanation: `Based on ${sub.name} execution rules.`
+              prompt: `${sub.name} Level ${i}: What does this code output?`,
+              options: ['Output X', 'Output Y', 'Output Z', 'No output'],
+              correctAnswer: 'Output Y',
+              hint: `Trace through the execution step by step`
             }
           ]
         });
 
-        // Coding Battle Game
-        const codingId = new mongoose.Types.ObjectId();
+        // CodingBattle Game
         gamesToInsert.push({
-          _id: codingId,
-          skillId,
+          _id: new mongoose.Types.ObjectId(),
           title: `${sub.name} L${i} - Coding Battle`,
-          type: 'CodingBattle',
-          subject: sub.name,
-          level: i,
+          description: `Fix bugs in ${sub.name} code at level ${i}`,
+          skillAssociated: skillId,
+          gameType: 'CodingBattle',
+          baseDifficulty: diff,
           xpReward: 150,
-          challenges: [
+          codingChallenges: [
             {
-              description: `Fix the bug in this ${sub.name} code snippet - Level ${i}`,
-              codeLines: [
-                `# ${sub.name} Level ${i} Challenge`,
-                `def solve():`,
-                `    result = computeValue()`,
-                `    return reslt  # Bug here`,
-                ``,
-                `print(solve())`
-              ],
-              correctLineIndex: 3,
-              buggyLine: `    return reslt  # Bug here`,
+              title: `${sub.name} L${i} Bug Fix #1`,
+              instructions: `Find and fix the bug in this ${sub.name} code snippet`,
+              buggyCode: `def solve_level_${i}():\n    result = compute()\n    return reslt  # Bug: typo\n\nprint(solve_level_${i}())`,
+              correctLineIndex: 2,
+              buggyLine: `    return reslt  # Bug: typo`,
               correctLine: `    return result`,
-              language: sub.shortName,
-              hints: [`Check the variable name spelling`, `Look at line 3`]
+              language: sub.slug,
+              hints: [`Check variable name spelling on line 3`, `Compare with the variable declared above`]
             },
             {
-              description: `Complete the missing logic - Level ${i} Part 2`,
-              codeLines: [
-                `# ${sub.name} Level ${i} Part 2`,
-                `def calculate(x, y):`,
-                `    return x + y  # Wrong operator`,
-                ``,
-                `print(calculate(10, 5))`
-              ],
-              correctLineIndex: 2,
+              title: `${sub.name} L${i} Bug Fix #2`,
+              instructions: `Identify the logical error in this level ${i} challenge`,
+              buggyCode: `def calculate_${i}(x, y):\n    return x + y  # Wrong operator\n\nprint(calculate_${i}(10, 5))`,
+              correctLineIndex: 1,
               buggyLine: `    return x + y  # Wrong operator`,
               correctLine: `    return x * y`,
-              language: sub.shortName,
-              hints: [`Check the operator`, `Should multiply not add`]
+              language: sub.slug,
+              hints: [`Check if addition or multiplication is needed`, `Verify the expected output`]
             },
             {
-              description: `Debug the condition - Level ${i} Part 3`,
-              codeLines: [
-                `# ${sub.name} Level ${i} Part 3`,
-                `def check(n):`,
-                `    if n > 0:`,
-                `        return "negative"  # Wrong label`,
-                `    return "positive"`
-              ],
-              correctLineIndex: 3,
+              title: `${sub.name} L${i} Bug Fix #3`,
+              instructions: `Fix the condition logic in this ${sub.name} level ${i} code`,
+              buggyCode: `def check_${i}(n):\n    if n > 0:\n        return "negative"  # Wrong label\n    return "positive"`,
+              correctLineIndex: 2,
               buggyLine: `        return "negative"  # Wrong label`,
               correctLine: `        return "positive"`,
-              language: sub.shortName,
-              hints: [`Check the return value logic`, `Positive numbers are > 0`]
+              language: sub.slug,
+              hints: [`Positive numbers are greater than zero`, `Check which label matches which condition`]
             }
           ]
         });
@@ -145,19 +135,19 @@ router.post('/', async (req: Request, res: Response) => {
       }
     }
 
-    await Skill.insertMany(skillsToInsert);
-    await Game.insertMany(gamesToInsert);
+    await Skill.insertMany(skillsToInsert, { ordered: false });
+    await Game.insertMany(gamesToInsert, { ordered: false });
 
     return res.json({
       success: true,
-      message: `Seeded successfully!`,
+      message: 'Production database seeded successfully!',
       skills: skillsToInsert.length,
       games: gamesToInsert.length
     });
 
   } catch (err: any) {
     console.error('Seed error:', err);
-    return res.status(500).json({ success: false, message: err.message });
+    return res.status(500).json({ success: false, message: err.message, details: err.toString() });
   }
 });
 
